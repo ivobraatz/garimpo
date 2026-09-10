@@ -84,3 +84,16 @@ jobs:
 
             - Windows: use o `.exe` (NSIS) ou `.msi`.
             - Linux: use o `.AppImage` ou o pacote `.deb` para Debian/Ubuntu.
+
+  publish:
+    name: Publicar a release
+    needs: bundle
+    # Os dois jobs anexam os arquivos ao mesmo rascunho. So depois de ambos
+    # terminarem ele se torna publico, para ninguem baixar uma release parcial.
+    if: github.ref_type == 'tag' && needs.bundle.result == 'success'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Publicar os instaladores anexados
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: gh release edit "$GITHUB_REF_NAME" --draft=false

@@ -46,8 +46,8 @@ git tag v0.1.0
 git push origin v0.1.0
 ```
 
-O GitHub Actions cria uma Release como rascunho com os quatro formatos; revise
-os arquivos e publique o rascunho para disponibilizá-los.
+O GitHub Actions cria os quatro formatos e publica a Release depois que as
+compilações de Windows e Linux terminarem.
 
 ### Requisitos para desenvolvimento
 
