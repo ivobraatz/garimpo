@@ -5,9 +5,9 @@
 //! O Rust so le o banco e dispara o pipeline; toda a coleta e o tratamento
 //! continuam em Python, que ja resolve isso e nao precisa ser reescrito.
 //!
-//! Instalacao e dados sao separados de proposito: o programa e os scripts
-//! vivem na pasta de instalacao e sao trocados a cada atualizacao; os dados
-//! ficam fora dela e sobrevivem.
+//! Instalacao e dados sao separados de proposito: o programa e as ferramentas
+//! Python ja empacotadas vivem na pasta de instalacao e sao trocados a cada
+//! atualizacao; os dados ficam fora dela e sobrevivem.
 
 mod dados;
 
@@ -201,10 +201,20 @@ fn python() -> String {
     std::env::var("PYTHON").unwrap_or_else(|_| "python".to_string())
 }
 
-/// Caminho do script: em desenvolvimento vem de src/, instalado vem da pasta
-/// scripts/ ao lado do executavel.
+/// Em desenvolvimento, chama os fontes Python em `src/`. No pacote, chama o
+/// executavel PyInstaller correspondente, que ja traz o interpretador e as
+/// dependencias: quem instala o Garimpo nao precisa ter Python no PATH.
 fn caminho_script(locais: &Locais, nome: &str) -> String {
-    locais.scripts.join(nome).to_string_lossy().into_owned()
+    if locais.repo {
+        locais.scripts.join(nome).to_string_lossy().into_owned()
+    } else {
+        let nome = if cfg!(windows) {
+            nome.strip_suffix(".py").unwrap_or(nome).to_string() + ".exe"
+        } else {
+            nome.strip_suffix(".py").unwrap_or(nome).to_string()
+        };
+        locais.scripts.join(nome).to_string_lossy().into_owned()
+    }
 }
 
 /// Roda um script do projeto e devolve cada linha da saida para a tela.
@@ -217,9 +227,17 @@ fn rodar_script(
     args: Vec<String>,
     evento: &'static str,
 ) -> Result<(), String> {
-    let mut comando = Command::new(python());
+    let mut args = args.into_iter();
+    let primeiro = args.next().ok_or("nenhum comando para executar")?;
+    let mut comando = if locais.repo {
+        let mut comando = Command::new(python());
+        comando.arg(primeiro);
+        comando
+    } else {
+        Command::new(primeiro)
+    };
     comando
-        .args(&args)
+        .args(args)
         .current_dir(&locais.dados)
         .env("PYTHONIOENCODING", "utf-8")
         .env("PYTHONUNBUFFERED", "1")
@@ -230,7 +248,7 @@ fn rodar_script(
 
     let mut filho = comando
         .spawn()
-        .map_err(|e| format!("não consegui executar o python: {e}"))?;
+        .map_err(|e| format!("não consegui executar a ferramenta do Garimpo: {e}"))?;
 
     let stdout = filho.stdout.take();
     let stderr = filho.stderr.take();
@@ -423,7 +441,7 @@ fn main() {
             // Sempre resolve: sem configuração usa a pasta padrão do usuário e
             // a cria. O app abre e funciona sem perguntar nada.
             app.manage(Contexto {
-                locais: Mutex::new(dados::locais()),
+                locais: Mutex::new(dados::locais(app.path().resource_dir().ok())),
                 rodando: Mutex::new(false),
                 malhas: Mutex::new(HashMap::new()),
             });

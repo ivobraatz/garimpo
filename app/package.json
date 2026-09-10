@@ -7,7 +7,8 @@
     "dev": "next dev -p 5180",
     "build": "next build",
     "app": "tauri dev --no-watch",
-    "app:build": "tauri build",
+    "tools:build": "node scripts/build-python-tools.mjs",
+    "app:build": "npm run tools:build && tauri build",
     "lint": "next lint"
   },
   "dependencies": {

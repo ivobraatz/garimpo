@@ -1,0 +1,86 @@
+name: Release desktop
+
+# Uma tag vX.Y.Z gera os instaladores nativos e os anexa como rascunho a uma
+# GitHub Release. Revise o rascunho e publique-o quando os arquivos estiverem
+# prontos para os usuários.
+on:
+  push:
+    tags: ["v*"]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  bundle:
+    name: Empacotar (${{ matrix.label }})
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - label: Windows
+            os: windows-latest
+            bundles: nsis,msi
+          - label: Linux
+            os: ubuntu-22.04
+            bundles: appimage,deb
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Instalar dependências de empacotamento Linux
+        if: matrix.label == 'Linux'
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y libwebkit2gtk-4.1-dev libappindicator3-dev librsvg2-dev patchelf
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: app/package-lock.json
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - uses: dtolnay/rust-toolchain@stable
+
+      - uses: swatinem/rust-cache@v2
+        with:
+          workspaces: app/src-tauri
+
+      - name: Instalar dependências da interface
+        run: npm ci --prefix app
+
+      - name: Instalar dependências do pipeline e empacotador Python
+        run: python -m pip install -r requirements.txt pyinstaller
+
+      - name: Conferir a versão da tag
+        if: github.ref_type == 'tag'
+        shell: bash
+        run: |
+          set -euo pipefail
+          expected="${GITHUB_REF_NAME#v}"
+          package_version="$(node -p "require('./app/package.json').version")"
+          tauri_version="$(node -p "require('./app/src-tauri/tauri.conf.json').version")"
+          cargo_version="$(sed -n 's/^version = "\([^"]*\)"/\1/p' app/src-tauri/Cargo.toml | head -n1)"
+          if [[ "$package_version" != "$expected" || "$tauri_version" != "$expected" || "$cargo_version" != "$expected" ]]; then
+            echo "::error::v$expected nao corresponde a package=$package_version, tauri=$tauri_version, cargo=$cargo_version"
+            exit 1
+          fi
+
+      - uses: tauri-apps/tauri-action@v0
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          projectPath: app
+          args: --bundles ${{ matrix.bundles }}
+          tagName: ${{ github.ref_type == 'tag' && github.ref_name || format('build-{0}', github.run_number) }}
+          releaseName: Garimpo ${{ github.ref_name || format('build {0}', github.run_number) }}
+          releaseDraft: true
+          releaseBody: |
+            Instaladores prontos para Windows e Linux.
+
+            - Windows: use o `.exe` (NSIS) ou `.msi`.
+            - Linux: use o `.AppImage` ou o pacote `.deb` para Debian/Ubuntu.

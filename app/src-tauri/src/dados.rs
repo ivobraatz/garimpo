@@ -73,12 +73,12 @@ pub struct Filtros {
     pub ordem: String,
 }
 
-/// Onde ficam os scripts e onde ficam os dados.
+/// Onde ficam as ferramentas de processamento e onde ficam os dados.
 ///
-/// Sao coisas diferentes de proposito. O programa e os scripts vivem na pasta
-/// de instalacao e sao substituidos a cada atualizacao; os dados ficam fora
-/// dela e sobrevivem. Misturar os dois foi o que fez a versao anterior pedir a
-/// pasta do projeto ao abrir.
+/// Sao coisas diferentes de proposito. O programa e as ferramentas empacotadas
+/// vivem na pasta de instalacao e sao substituidos a cada atualizacao; os dados
+/// ficam fora dela e sobrevivem. Misturar os dois foi o que fez a versao
+/// anterior pedir a pasta do projeto ao abrir.
 #[derive(Debug, Clone, Serialize)]
 pub struct Locais {
     pub dados: PathBuf,
@@ -148,14 +148,20 @@ fn dados_padrao() -> PathBuf {
 
 /// Resolve os dois caminhos. Nunca falha: sem configuracao, usa o padrao e o
 /// cria -- o app abre e funciona sem perguntar nada.
-pub fn locais() -> Locais {
+pub fn locais(recursos: Option<PathBuf>) -> Locais {
     let repo = repositorio();
     let scripts = match &repo {
         Some(r) => r.join("src"),
-        None => std::env::current_exe()
-            .ok()
-            .and_then(|e| e.parent().map(|p| p.join("scripts")))
-            .unwrap_or_else(|| PathBuf::from("scripts")),
+        // O resolvedor do Tauri conhece o local correto em cada formato: ao
+        // lado do .exe no Windows e em /usr/lib no DEB/AppImage, por exemplo.
+        None => recursos
+            .unwrap_or_else(|| {
+                std::env::current_exe()
+                    .ok()
+                    .and_then(|e| e.parent().map(|p| p.join("resources")))
+                    .unwrap_or_else(|| PathBuf::from("resources"))
+            })
+            .join("binaries"),
     };
     let dados = pasta_dados_salva()
         .or_else(|| repo.as_ref().map(|r| r.join("data")))

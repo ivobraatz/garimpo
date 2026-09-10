@@ -26,18 +26,49 @@ Os dados ficam no seu computador; não há servidor, conta ou mensalidade.
 
 ## Começar
 
+### Baixar o aplicativo pronto
+
+Os instaladores de Windows e Linux estão em
+[Releases](https://github.com/ivobraatz/garimpo/releases/latest). Eles incluem
+o motor de processamento do Garimpo: para usar o aplicativo instalado não é
+necessário instalar Python, Node.js nem Rust.
+
+- **Windows:** baixe o arquivo `.exe` (instalador recomendado) ou `.msi` para
+  distribuição por equipes de TI.
+- **Linux:** baixe o `.AppImage` (distribuição genérica; marque-o como
+  executável) ou o `.deb` para Debian e Ubuntu.
+
+As versões publicadas preservam a sua pasta de dados. Antes de publicar uma
+versão, crie e envie a tag que corresponde à versão do projeto, por exemplo:
+
+```bash
+git tag v0.1.0
+git push origin v0.1.0
+```
+
+O GitHub Actions cria uma Release como rascunho com os quatro formatos; revise
+os arquivos e publique o rascunho para disponibilizá-los.
+
 ### Requisitos para desenvolvimento
 
-- Windows com Python 3 disponível no `PATH`
+- Windows ou Linux com Python 3 disponível no `PATH`
 - Node.js e npm
 - Rust, caso queira compilar o aplicativo Tauri
+
+No Linux, a compilação do Tauri também requer WebKitGTK e as bibliotecas de
+empacotamento. O workflow de Release contém a lista usada no Ubuntu 22.04.
 
 ```bash
 git clone https://github.com/ivobraatz/garimpo.git
 cd garimpo
 
 python -m venv .venv
-.venv\Scripts\activate
+```
+
+Ative o ambiente com `.venv\Scripts\Activate.ps1` no PowerShell ou
+`source .venv/bin/activate` no Linux. Em seguida:
+
+```bash
 pip install -r requirements.txt
 
 cd app
@@ -48,20 +79,28 @@ npm run app
 O comando abre o aplicativo em modo de desenvolvimento. Para atualizar somente
 a interface no navegador, use `npm run dev`.
 
-### Gerar o instalador
+### Gerar o instalador localmente
 
-Com as dependências Python já instaladas, execute:
+Com as dependências Python já instaladas, inclua também o PyInstaller para
+montar o motor de processamento dentro do instalador:
+
+```bash
+pip install pyinstaller
+```
+
+Depois execute:
 
 ```bash
 cd app
 npm run app:build
 ```
 
-Os instaladores NSIS e MSI são gerados em
-`app/src-tauri/target/release/bundle/`.
+No Windows, os instaladores NSIS e MSI são gerados em
+`app/src-tauri/target/release/bundle/`. No Linux, a mesma rotina gera AppImage
+e DEB quando as dependências nativas do Tauri estão instaladas.
 
-> O aplicativo instalado precisa de Python 3 no `PATH`, pois os scripts de
-> processamento são empacotados junto da interface.
+> A compilação local ainda usa Python para criar o pacote; o instalador gerado
+> não exige Python na máquina de quem o instalar.
 
 ## Uso pelo aplicativo
 

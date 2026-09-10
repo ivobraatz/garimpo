@@ -27,6 +27,8 @@ npm-debug.log*
 # Tauri
 app/src-tauri/target/
 app/src-tauri/gen/
+app/src-tauri/binaries/*
+!app/src-tauri/binaries/.gitkeep
 
 # Local tooling and operating systems
 .qodo/
