@@ -4,6 +4,8 @@
   "version": "0.1.0",
   "identifier": "br.scarp.garimpo",
   "build": {
+    "beforeDevCommand": "npm run dev",
+    "devUrl": "http://localhost:5180",
     "frontendDist": "../out",
     "beforeBuildCommand": "npm run build"
   },

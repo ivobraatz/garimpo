@@ -46,7 +46,7 @@ npm run app
 ```
 
 O comando abre o aplicativo em modo de desenvolvimento. Para atualizar somente
-a interface, use `npm run dev` em uma janela e `npx tauri dev` em outra.
+a interface no navegador, use `npm run dev`.
 
 ### Gerar o instalador
 
