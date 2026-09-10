@@ -1,0 +1,245 @@
+.tela {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(390px, 1fr));
+  height: 100%;
+  min-height: 0;
+  overflow: hidden;
+}
+
+.coluna {
+  padding: 18px;
+  overflow-y: auto;
+  min-height: 0;
+  border-right: 1px solid var(--linha);
+}
+
+.coluna:last-child { border-right: 0; background: var(--papel); }
+
+.titulo {
+  margin: 0 0 13px;
+  font-size: 10.5px;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: var(--tinta-4);
+}
+
+.cartoes { display: flex; flex-direction: column; gap: 7px; }
+
+.cartao {
+  display: flex;
+  align-items: center;
+  gap: 13px;
+  padding: 11px 13px;
+  background: var(--branco);
+  border: 1px solid var(--linha);
+  border-radius: var(--raio-g);
+  box-shadow: var(--sombra-1);
+  text-align: left;
+  transition: border-color var(--transicao), box-shadow var(--transicao);
+}
+
+.cartao:hover { border-color: var(--linha-forte); box-shadow: var(--sombra-2); }
+.cartao[data-ativo="true"] { border-color: var(--acento); background: var(--acento-claro); }
+
+.sigla { font-size: 17px; font-weight: 600; letter-spacing: -0.03em; color: var(--tinta-3); min-width: 32px; }
+.cartao[data-ativo="true"] .sigla { color: var(--acento); }
+
+.corpo { display: flex; flex-direction: column; min-width: 0; }
+.numero { font-size: 15px; font-weight: 600; letter-spacing: -0.025em; line-height: 1.3; }
+.legenda { font-size: 11px; color: var(--tinta-3); }
+.meta { font-size: 10px; color: var(--tinta-4); margin-top: 2px; }
+.tamanho { font-size: 10.5px; color: var(--tinta-4); }
+
+.explicacao {
+  margin: 0 0 16px;
+  padding-left: 11px;
+  border-left: 2px solid var(--linha-forte);
+  font-size: 12px;
+  line-height: 1.55;
+  color: var(--tinta-3);
+}
+
+.formulario { display: grid; grid-template-columns: 88px 1fr; gap: 10px; }
+.campoUf, .campoCidades { min-width: 0; }
+.campoUf .entrada { text-transform: uppercase; }
+.opcional { color: var(--tinta-4); font-weight: 400; letter-spacing: 0; text-transform: none; }
+.custo { margin-left: auto; font-size: 10.5px; color: var(--tinta-4); }
+
+.log {
+  margin-top: 14px;
+  padding: 11px 13px;
+  background: var(--branco);
+  border: 1px solid var(--linha);
+  border-radius: var(--raio);
+  font-family: var(--fonte-mono), monospace;
+  font-size: 10.5px;
+  line-height: 1.7;
+  color: var(--tinta-2);
+  max-height: 300px;
+  overflow-y: auto;
+  white-space: pre-wrap;
+}
+
+.logErro { color: var(--vermelho); }
+.logFim { color: var(--verde); }
+
+/* ------------------------- escolha dos estados --------------------------- */
+
+.regioes { display: flex; flex-direction: column; gap: 11px; }
+.regiao { display: flex; flex-direction: column; gap: 5px; }
+
+.regiaoNome {
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: var(--tinta-4);
+}
+
+.grade { display: flex; flex-wrap: wrap; gap: 5px; }
+
+.pastilha {
+  position: relative;
+  min-width: 42px;
+  height: 30px;
+  padding: 0 9px;
+  border: 1px solid var(--linha-forte);
+  border-radius: var(--raio);
+  background: var(--branco);
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  color: var(--tinta-3);
+  transition: border-color var(--transicao), background var(--transicao),
+              color var(--transicao);
+}
+
+.pastilha:hover:not(:disabled) { border-color: var(--acento); color: var(--tinta); }
+
+.pastilha[data-marcado="true"] {
+  background: var(--acento);
+  border-color: var(--acento);
+  color: #fff;
+}
+
+.pastilha:disabled { opacity: 0.5; cursor: default; }
+
+/* Ponto verde: estado que já está na base. */
+.pontinho {
+  position: absolute;
+  top: 4px;
+  right: 4px;
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: var(--verde);
+}
+
+.pastilha[data-marcado="true"] .pontinho { background: #fff; }
+
+.dicaCaixa {
+  margin: 5px 0 0 22px;
+  font-size: 11px;
+  line-height: 1.45;
+  color: var(--tinta-4);
+}
+
+.resumoEscolha {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  margin: 8px 0 0;
+  font-size: 11.5px;
+  color: var(--tinta-3);
+}
+
+.refazer { display: inline-flex; align-items: center; gap: 4px; color: var(--ambar); }
+
+
+/* --------------------------- cartao de estado ---------------------------- */
+
+.cartaoAbrir {
+  display: flex;
+  align-items: center;
+  gap: 13px;
+  flex: 1 1 auto;
+  min-width: 0;
+  text-align: left;
+}
+
+.direita { display: flex; flex-direction: column; align-items: flex-end; gap: 5px; }
+.acoesCartao { display: flex; gap: 4px; }
+
+.apagar {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  padding: 2px 6px;
+  border: 1px solid var(--linha);
+  border-radius: 4px;
+  font-size: 10.5px;
+  color: var(--tinta-4);
+  transition: color var(--transicao), border-color var(--transicao),
+              background var(--transicao);
+}
+
+.apagar:hover:not(:disabled) {
+  color: var(--vermelho);
+  border-color: #fecaca;
+  background: #fef2f2;
+}
+
+.apagar[data-forte="true"]:hover:not(:disabled) {
+  color: #fff;
+  background: var(--vermelho);
+  border-color: var(--vermelho);
+}
+
+.apagar:disabled { opacity: 0.4; cursor: default; }
+
+/* ---------------------------- armazenamento ------------------------------ */
+
+.armazenamento {
+  padding: 12px 13px;
+  background: var(--branco);
+  border: 1px solid var(--linha);
+  border-radius: var(--raio-g);
+  box-shadow: var(--sombra-1);
+}
+
+.linhaPasta { display: flex; align-items: center; gap: 8px; }
+.linhaPasta > svg { color: var(--tinta-4); flex: 0 0 auto; }
+
+.caminho {
+  flex: 1 1 auto;
+  min-width: 0;
+  font-size: 11px;
+  color: var(--tinta-2);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  direction: rtl;
+  text-align: left;
+}
+
+.linhaPasta .botao { flex: 0 0 auto; height: 26px; padding: 0 9px; }
+
+.numerosDisco {
+  display: flex;
+  gap: 16px;
+  margin-top: 9px;
+  font-size: 11.5px;
+  color: var(--tinta-3);
+}
+
+.numerosDisco b { color: var(--tinta); font-weight: 600; }
+
+.notaPasta {
+  margin: 9px 0 0;
+  padding-top: 9px;
+  border-top: 1px solid var(--linha);
+  font-size: 11px;
+  line-height: 1.5;
+  color: var(--tinta-4);
+}

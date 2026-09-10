@@ -1,0 +1,33 @@
+{
+  "name": "garimpo",
+  "version": "0.1.0",
+  "license": "AGPL-3.0-only",
+  "private": true,
+  "scripts": {
+    "dev": "next dev -p 5180",
+    "build": "next build",
+    "app": "tauri dev --no-watch",
+    "app:build": "tauri build",
+    "lint": "next lint"
+  },
+  "dependencies": {
+    "@tauri-apps/api": "^2",
+    "@tauri-apps/plugin-dialog": "^2",
+    "@tauri-apps/plugin-opener": "^2",
+    "d3-geo": "^3.1.1",
+    "geist": "^1.7.2",
+    "lucide-react": "^1.43.0",
+    "maplibre-gl": "^4.7.1",
+    "next": "^15.1.6",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0"
+  },
+  "devDependencies": {
+    "@tauri-apps/cli": "^2.11.4",
+    "@types/d3-geo": "^3.1.0",
+    "@types/node": "^22",
+    "@types/react": "^19",
+    "@types/react-dom": "^19",
+    "typescript": "^5.7"
+  }
+}

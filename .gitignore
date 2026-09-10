@@ -1,0 +1,34 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+venv/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+htmlcov/
+
+# Local configuration and generated data
+.env
+.env.*
+!.env.example
+data/
+
+# Node and Next.js
+app/node_modules/
+app/.next/
+app/out/
+app/next-env.d.ts
+*.tsbuildinfo
+npm-debug.log*
+
+# Tauri
+app/src-tauri/target/
+app/src-tauri/gen/
+
+# Local tooling and operating systems
+.qodo/
+.DS_Store
+Thumbs.db

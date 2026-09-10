@@ -1,0 +1,45 @@
+.tela { display: grid; grid-template-rows: auto 1fr; height: 100%; min-height: 0; }
+
+.cabecalho {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  padding: 13px 16px;
+  border-bottom: 1px solid var(--linha);
+}
+
+.cabecalho h2 { margin: 0; font-size: 15px; font-weight: 600; letter-spacing: -0.025em; }
+.cabecalho p { margin: 2px 0 0; font-size: 11.5px; color: var(--tinta-3); }
+.cabecalho .busca { margin-left: auto; width: 220px; }
+
+.area { overflow: auto; min-height: 0; }
+.tabela { width: 100%; border-collapse: collapse; }
+
+.tabela thead th {
+  position: sticky;
+  top: 0;
+  z-index: 2;
+  background: var(--branco);
+  text-align: left;
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--tinta-4);
+  padding: 7px 14px;
+  border-bottom: 1px solid var(--linha);
+  white-space: nowrap;
+}
+
+.tabela tbody tr { border-bottom: 1px solid var(--linha); cursor: pointer; }
+.tabela tbody tr:hover { background: var(--papel); }
+.tabela td { padding: 7px 14px; }
+
+.n { text-align: right; white-space: nowrap; color: var(--tinta-3); font-size: 11.5px; }
+.nome { font-size: 12.5px; font-weight: 500; color: var(--tinta); letter-spacing: -0.01em; }
+.forte { color: var(--tinta); font-weight: 600; font-size: 12.5px; }
+.destaque { color: var(--acento); font-weight: 500; }
+.colBarra { width: 120px; }
+
+.barra { display: block; height: 4px; background: var(--papel-3); border-radius: 2px; overflow: hidden; }
+.barra i { display: block; height: 100%; background: var(--acento); opacity: 0.8; }
