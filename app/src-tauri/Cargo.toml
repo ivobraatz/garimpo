@@ -1,6 +1,6 @@
 [package]
 name = "garimpo"
-version = "0.1.0"
+version = "0.1.1"
 description = "Garimpo — separa o contato que vale do cadastro bruto de CNPJ"
 license = "AGPL-3.0-only"
 edition = "2021"
