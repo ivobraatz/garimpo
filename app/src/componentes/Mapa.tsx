@@ -46,7 +46,7 @@ const PALETAS: Record<Tema, {
   escuro: {
     oceano: "#0d1518", terra: "#17242a", bordaTerra: "#34464d",
     semDados: "#26353a", contorno: "#60757a", contornoSob: "#e9f5f2",
-    rampa: ["#133a39", "#14514e", "#176761", "#0d8177", "#14998d", "#20b7a8", "#3fd5c3", "#75e7d6", "#b5f5e9"],
+    rampa: ["#b5f5e9", "#75e7d6", "#3fd5c3", "#20b7a8", "#14998d", "#0d8177", "#176761", "#14514e", "#133a39"],
   },
 };
 
