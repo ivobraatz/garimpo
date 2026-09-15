@@ -96,7 +96,7 @@
   flex: 0 0 auto;
 }
 
-.selecionados:hover { background: #d9f8f2; }
+.selecionados:hover { background: var(--acento-borda); }
 .limparSel { opacity: 0.6; }
 
 .chips {
@@ -228,8 +228,8 @@
   white-space: nowrap;
 }
 
-.seloPorte { color: var(--verde); background: #f0fdf4; border: 1px solid #bbf7d0; }
-.seloSemSite { color: var(--vermelho); background: #fef2f2; border: 1px solid #fecaca; }
+.seloPorte { color: var(--verde); background: color-mix(in srgb, var(--verde) 12%, var(--branco)); border: 1px solid color-mix(in srgb, var(--verde) 35%, var(--linha)); }
+.seloSemSite { color: var(--vermelho); background: color-mix(in srgb, var(--vermelho) 11%, var(--branco)); border: 1px solid color-mix(in srgb, var(--vermelho) 35%, var(--linha)); }
 
 .score { display: flex; flex-direction: column; gap: 3px; align-items: flex-end; }
 .score b { font-size: 12.5px; font-weight: 600; }

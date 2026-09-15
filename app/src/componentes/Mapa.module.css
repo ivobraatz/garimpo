@@ -5,7 +5,7 @@
   min-height: 0;
 }
 
-.mapa { position: relative; min-width: 0; background: #eef2f5; }
+.mapa { position: relative; min-width: 0; background: var(--papel-2); }
 .canvas { position: absolute; inset: 0; }
 
 /* Controles do MapLibre encaixados no tema claro. */
@@ -22,7 +22,7 @@
 .canvas :global(.maplibregl-ctrl-group button:hover) { background: var(--papel-2); }
 
 .canvas :global(.maplibregl-ctrl-scale) {
-  background: #ffffffd9;
+  background: color-mix(in srgb, var(--branco) 88%, transparent);
   border: 1px solid var(--linha);
   border-top: none;
   border-radius: 0 0 var(--raio) var(--raio);
@@ -39,9 +39,9 @@
   font-size: 10.5px;
   font-weight: 600;
   letter-spacing: -0.01em;
-  color: #0b3b37;
+  color: var(--acento-escuro);
   text-shadow:
-    0 0 3px #fff, 0 0 3px #fff, 0 0 2px #fff, 0 1px 2px #fff;
+    0 0 3px var(--branco), 0 0 3px var(--branco), 0 0 2px var(--branco), 0 1px 2px var(--branco);
   pointer-events: none;
   white-space: nowrap;
   user-select: none;
@@ -105,7 +105,7 @@
   left: 12px;
   width: 196px;
   padding: 8px 10px 7px;
-  background: #ffffffe6;
+  background: color-mix(in srgb, var(--branco) 90%, transparent);
   backdrop-filter: blur(6px);
   border: 1px solid var(--linha);
   border-radius: var(--raio);
@@ -128,7 +128,7 @@
   height: 7px;
   border-radius: 2px;
   overflow: hidden;
-  border: 1px solid #00000010;
+  border: 1px solid var(--linha);
 }
 
 .rampa i { flex: 1; }

@@ -3,7 +3,7 @@
 import { useCallback, useEffect, useState } from "react";
 import dynamic from "next/dynamic";
 import {
-  AlertCircle, CheckCircle2, Database, Info, Layers, Map as MapIcon, Users,
+  AlertCircle, CheckCircle2, Database, Info, Layers, Map as MapIcon, Moon, Sun, Users,
 } from "lucide-react";
 
 import Base from "@/componentes/Base";
@@ -21,6 +21,7 @@ const Mapa = dynamic(() => import("@/componentes/Mapa"), {
 });
 
 type Tela = "contatos" | "mapa" | "segmentos" | "base";
+type Tema = "claro" | "escuro";
 
 const ABAS = [
   { id: "contatos" as const, nome: "Contatos", Icone: Users },
@@ -36,6 +37,25 @@ export default function Pagina() {
   const [filtrosVindos, setFiltrosVindos] = useState<Partial<Filtros> | null>(null);
   const [aviso, setAviso] = useState<{ texto: string; tipo?: "bom" | "ruim" } | null>(null);
   const [iniciando, setIniciando] = useState(true);
+  const [tema, setTema] = useState<Tema>("claro");
+
+  useEffect(() => {
+    const salvo = window.localStorage.getItem("tema") as Tema | null;
+    const escolhido = salvo === "escuro" || salvo === "claro"
+      ? salvo
+      : window.matchMedia("(prefers-color-scheme: dark)").matches ? "escuro" : "claro";
+    setTema(escolhido);
+    document.documentElement.dataset.tema = escolhido;
+  }, []);
+
+  const trocarTema = useCallback(() => {
+    setTema((atual) => {
+      const proximo = atual === "claro" ? "escuro" : "claro";
+      document.documentElement.dataset.tema = proximo;
+      window.localStorage.setItem("tema", proximo);
+      return proximo;
+    });
+  }, []);
 
   const avisar = useCallback((texto: string, tipo?: "bom" | "ruim") => {
     setAviso({ texto, tipo });
@@ -108,6 +128,11 @@ export default function Pagina() {
         )}
 
         <div className="topo-direita">
+          <button className="tema" onClick={trocarTema} type="button"
+                  title={tema === "claro" ? "Ativar tema escuro" : "Ativar tema claro"}
+                  aria-label={tema === "claro" ? "Ativar tema escuro" : "Ativar tema claro"}>
+            {tema === "claro" ? <Moon size={15} /> : <Sun size={15} />}
+          </button>
           {atual && (
             <span className="contexto">
               <b>{mil(atual.contatos)}</b> contatos
@@ -144,7 +169,7 @@ export default function Pagina() {
         )}
 
         {!iniciando && uf && tela === "mapa" && (
-          <Mapa uf={uf} estadosDisponiveis={estados} aoEscolherMunicipio={abrirMunicipio} />
+          <Mapa tema={tema} uf={uf} estadosDisponiveis={estados} aoEscolherMunicipio={abrirMunicipio} />
         )}
 
         {!iniciando && uf && tela === "segmentos" && (

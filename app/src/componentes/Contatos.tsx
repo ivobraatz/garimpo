@@ -9,7 +9,7 @@ import {
 } from "lucide-react";
 
 import {
-  buscar, exportar, filtrosVazios, municipios, segmentos,
+  buscar, exportar, facetas, filtrosVazios,
   type Contato, type ContagemArea, type Filtros,
 } from "@/lib/api";
 import { faixaScore, mil, porteBonito, telefonePrincipal } from "@/lib/formato";
@@ -61,15 +61,19 @@ export default function Contatos({
     setAberto(null);
   }, [uf, filtrosIniciais]);
 
+  // As contagens de cada menu consideram todos os outros filtros ativos.
+  // Ex.: depois de escolher uma cidade, o menu de ramos mostra só o que há nela.
   useEffect(() => {
     let vivo = true;
-    Promise.all([municipios(uf), segmentos(uf)]).then(([m, s]) => {
-      if (!vivo) return;
-      setListaMunicipios([...m].sort((a, b) => a.nome.localeCompare(b.nome, "pt-BR")));
-      setListaSegmentos(s);
-    });
+    facetas(uf, filtros)
+      .then(({ municipios: m, segmentos: s }) => {
+        if (!vivo) return;
+        setListaMunicipios([...m].sort((a, b) => a.nome.localeCompare(b.nome, "pt-BR")));
+        setListaSegmentos(s);
+      })
+      .catch((e) => { if (vivo) avisar(String(e), "ruim"); });
     return () => { vivo = false; };
-  }, [uf]);
+  }, [uf, filtros, avisar]);
 
   // O termo digitado espera um instante antes de virar consulta.
   useEffect(() => {

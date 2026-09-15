@@ -186,8 +186,8 @@
 
 .apagar:hover:not(:disabled) {
   color: var(--vermelho);
-  border-color: #fecaca;
-  background: #fef2f2;
+  border-color: color-mix(in srgb, var(--vermelho) 42%, var(--linha));
+  background: color-mix(in srgb, var(--vermelho) 11%, var(--branco));
 }
 
 .apagar[data-forte="true"]:hover:not(:disabled) {

@@ -59,7 +59,7 @@ pub struct ContagemArea {
     pub score_medio: f64,
 }
 
-#[derive(Debug, Default, Deserialize)]
+#[derive(Debug, Default, Deserialize, Clone)]
 #[serde(default)]
 pub struct Filtros {
     pub termo: String,
@@ -71,6 +71,15 @@ pub struct Filtros {
     pub somente_email: bool,
     pub somente_sem_dominio: bool,
     pub ordem: String,
+}
+
+/// Opções dos filtros, recalculadas com as demais restrições já aplicadas.
+/// Cada lista ignora apenas o seu próprio campo, para que a troca de opção não
+/// esconda alternativas válidas.
+#[derive(Debug, Serialize)]
+pub struct Facetas {
+    pub municipios: Vec<ContagemArea>,
+    pub segmentos: Vec<ContagemArea>,
 }
 
 /// Onde ficam as ferramentas de processamento e onde ficam os dados.
@@ -522,6 +531,48 @@ pub fn segmentos(raiz: &Path, uf: &str) -> Result<Vec<ContagemArea>, String> {
         .collect::<Result<Vec<_>, _>>()
         .map_err(|e| e.to_string())?;
     Ok(itens)
+}
+
+fn agrupar_faceta(
+    conn: &Connection,
+    consulta: &Consulta,
+    codigo: &str,
+    nome: &str,
+) -> Result<Vec<ContagemArea>, String> {
+    let refs: Vec<&dyn rusqlite::ToSql> = consulta.params.iter().map(|p| p.as_ref()).collect();
+    let sql = format!(
+        "SELECT {codigo}, {nome}, COUNT(*), \
+         SUM(CASE WHEN c.email <> '' THEN 1 ELSE 0 END), \
+         SUM(CASE WHEN c.tem_celular = 1 THEN 1 ELSE 0 END), \
+         SUM(CASE WHEN c.email <> '' AND c.dominio_proprio = 0 THEN 1 ELSE 0 END), \
+         IFNULL(AVG(c.score), 0) FROM {} WHERE {} \
+         GROUP BY {codigo}, {nome} ORDER BY COUNT(*) DESC, {nome} ASC",
+        consulta.de, consulta.onde,
+    );
+    let mut st = conn.prepare(&sql).map_err(|e| e.to_string())?;
+    let itens = st.query_map(refs.as_slice(), |r| {
+        Ok(ContagemArea {
+            codigo: r.get(0)?, nome: r.get(1)?, contatos: r.get(2)?,
+            com_email: r.get(3)?, com_celular: r.get(4)?, sem_dominio: r.get(5)?,
+            score_medio: r.get(6)?,
+        })
+    })
+    .map_err(|e| e.to_string())?
+    .collect::<Result<Vec<_>, _>>()
+    .map_err(|e| e.to_string());
+    itens
+}
+
+pub fn facetas(raiz: &Path, uf: &str, filtros: &Filtros) -> Result<Facetas, String> {
+    let conn = abrir(&caminho_banco(raiz, uf))?;
+    let mut para_municipios = filtros.clone();
+    para_municipios.cidade.clear();
+    let mut para_segmentos = filtros.clone();
+    para_segmentos.segmento.clear();
+    Ok(Facetas {
+        municipios: agrupar_faceta(&conn, &montar(&para_municipios), "c.cod_municipio", "c.cidade")?,
+        segmentos: agrupar_faceta(&conn, &montar(&para_segmentos), "c.segmento", "c.segmento")?,
+    })
 }
 
 /// Malha GeoJSON guardada em data/ibge. `nome` e o arquivo, sem caminho.

@@ -34,6 +34,11 @@ export type ContagemArea = {
   score_medio: number;
 };
 
+export type Facetas = {
+  municipios: ContagemArea[];
+  segmentos: ContagemArea[];
+};
+
 export type EstadoDisponivel = {
   uf: string;
   contatos: number;
@@ -99,6 +104,9 @@ export const municipios = (uf: string) =>
 
 export const segmentos = (uf: string) =>
   invoke<ContagemArea[]>("segmentos", { uf });
+
+export const facetas = (uf: string, filtros: Filtros) =>
+  invoke<Facetas>("facetas", { uf, filtros });
 
 export const malha = (nome: string) =>
   invoke<GeoJSON.FeatureCollection>("malha", { nome });

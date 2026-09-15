@@ -33,15 +33,48 @@ const METRICAS: { valor: Metrica; nome: string }[] = [
 const RAMPA = ["#f0fdfa", "#ccfbf1", "#99f6e4", "#5eead4",
                "#2dd4bf", "#14b8a6", "#0d9488", "#0f766e", "#134e4a"];
 
-const OCEANO = "#eef2f5";
-const TERRA_VIZINHA = "#e4e7ea";
-const CONTORNO_VIZINHO = "#d3d7dc";
+type Tema = "claro" | "escuro";
 
-const ESTILO_BASE: maplibregl.StyleSpecification = {
-  version: 8,
-  sources: {},
-  layers: [{ id: "oceano", type: "background", paint: { "background-color": OCEANO } }],
+const PALETAS: Record<Tema, {
+  oceano: string; terra: string; bordaTerra: string; semDados: string;
+  contorno: string; contornoSob: string; rampa: string[];
+}> = {
+  claro: {
+    oceano: "#eef2f5", terra: "#e4e7ea", bordaTerra: "#d3d7dc",
+    semDados: "#f7f8f9", contorno: "#ffffff", contornoSob: "#101418", rampa: RAMPA,
+  },
+  escuro: {
+    oceano: "#0d1518", terra: "#17242a", bordaTerra: "#34464d",
+    semDados: "#26353a", contorno: "#60757a", contornoSob: "#e9f5f2",
+    rampa: ["#133a39", "#14514e", "#176761", "#0d8177", "#14998d", "#20b7a8", "#3fd5c3", "#75e7d6", "#b5f5e9"],
+  },
 };
+
+function estiloBase(tema: Tema): maplibregl.StyleSpecification {
+  return {
+    version: 8,
+    sources: {},
+    layers: [{ id: "oceano", type: "background", paint: { "background-color": PALETAS[tema].oceano } }],
+  };
+}
+
+function corPreenchimento(paleta: typeof PALETAS.claro): maplibregl.ExpressionSpecification {
+  return [
+    "case",
+    ["==", ["get", "temDado"], 0], paleta.semDados,
+    ["interpolate", ["linear"], ["get", "intensidade"],
+      0, paleta.rampa[0], 0.14, paleta.rampa[1], 0.28, paleta.rampa[2], 0.42, paleta.rampa[3],
+      0.56, paleta.rampa[4], 0.7, paleta.rampa[5], 0.82, paleta.rampa[6], 0.92, paleta.rampa[7],
+      1, paleta.rampa[8]],
+  ];
+}
+
+function corContorno(paleta: typeof PALETAS.claro): maplibregl.ExpressionSpecification {
+  return [
+    "case", ["boolean", ["feature-state", "sob"], false],
+    paleta.contornoSob, paleta.contorno,
+  ];
+}
 
 function limites(geo: GeoJSON.FeatureCollection): LngLatBoundsLike {
   let oeste = 180, sul = 90, leste = -180, norte = -90;
@@ -76,10 +109,12 @@ function centro(feicao: GeoJSON.Feature): [number, number] | null {
 }
 
 export default function Mapa({
+  tema,
   uf,
   estadosDisponiveis,
   aoEscolherMunicipio,
 }: {
+  tema: Tema;
   uf: string;
   estadosDisponiveis: { uf: string; contatos: number }[];
   aoEscolherMunicipio: (ufAlvo: string, municipio: string) => void;
@@ -161,7 +196,7 @@ export default function Mapa({
     if (!div.current || mapa.current) return;
     const m = new maplibregl.Map({
       container: div.current,
-      style: ESTILO_BASE,
+      style: estiloBase(tema),
       center: [-51, -15],
       zoom: 3,
       attributionControl: false,
@@ -203,6 +238,23 @@ export default function Mapa({
     };
   }, []);
 
+  // O MapLibre desenha no canvas e por isso não enxerga as variáveis CSS.
+  // Atualizamos explicitamente suas camadas ao alternar o tema.
+  useEffect(() => {
+    const m = mapa.current;
+    if (!m || !pronto) return;
+    const paleta = PALETAS[tema];
+    m.setPaintProperty("oceano", "background-color", paleta.oceano);
+    if (m.getLayer("contexto-terra")) {
+      m.setPaintProperty("contexto-terra", "fill-color", paleta.terra);
+      m.setPaintProperty("contexto-borda", "line-color", paleta.bordaTerra);
+    }
+    if (m.getLayer("preenchimento")) {
+      m.setPaintProperty("preenchimento", "fill-color", corPreenchimento(paleta));
+      m.setPaintProperty("contorno", "line-color", corContorno(paleta));
+    }
+  }, [pronto, tema]);
+
   const maximo = useMemo(
     () => Math.max(...contagens.map((c) => Number(c[metrica] ?? 0)), 1),
     [contagens, metrica],
@@ -216,6 +268,7 @@ export default function Mapa({
   useEffect(() => {
     const m = mapa.current;
     if (!m || !pronto) return;
+    const paleta = PALETAS[tema];
     let cancelado = false;
 
     (async () => {
@@ -267,11 +320,11 @@ export default function Mapa({
         m.addSource("contexto", { type: "geojson", data: brasil });
         m.addLayer({
           id: "contexto-terra", type: "fill", source: "contexto",
-          paint: { "fill-color": TERRA_VIZINHA },
+          paint: { "fill-color": paleta.terra },
         });
         m.addLayer({
           id: "contexto-borda", type: "line", source: "contexto",
-          paint: { "line-color": CONTORNO_VIZINHO, "line-width": 0.8 },
+          paint: { "line-color": paleta.bordaTerra, "line-width": 0.8 },
         });
       }
 
@@ -283,23 +336,13 @@ export default function Mapa({
         m.addLayer({
           id: "preenchimento", type: "fill", source: "areas",
           paint: {
-            "fill-color": [
-              "case",
-              ["==", ["get", "temDado"], 0], "#f7f8f9",
-              ["interpolate", ["linear"], ["get", "intensidade"],
-                0, RAMPA[0], 0.14, RAMPA[1], 0.28, RAMPA[2], 0.42, RAMPA[3],
-                0.56, RAMPA[4], 0.7, RAMPA[5], 0.82, RAMPA[6], 0.92, RAMPA[7],
-                1, RAMPA[8]],
-            ],
+            "fill-color": corPreenchimento(paleta),
           },
         });
         m.addLayer({
           id: "contorno", type: "line", source: "areas",
           paint: {
-            "line-color": [
-              "case", ["boolean", ["feature-state", "sob"], false],
-              "#101418", "#ffffff",
-            ],
+            "line-color": corContorno(paleta),
             "line-width": [
               "case", ["boolean", ["feature-state", "sob"], false], 2, 0.7,
             ],
@@ -341,7 +384,7 @@ export default function Mapa({
 
     return () => { cancelado = true; };
   }, [
-    pronto, nivel, ufMapa, metrica, estadosDisponiveis, limparMarcadores,
+    pronto, nivel, ufMapa, metrica, tema, estadosDisponiveis, limparMarcadores,
     carregarMalhaBrasil, carregarMalhaUf,
   ]);
 

@@ -217,6 +217,12 @@ fn caminho_script(locais: &Locais, nome: &str) -> String {
     }
 }
 
+#[tauri::command]
+fn facetas(ctx: State<Contexto>, uf: String, filtros: Filtros) -> Result<dados::Facetas, String> {
+    let uf = dados::normalizar_uf(&uf)?;
+    dados::facetas(&ctx.dados()?, &uf, &filtros)
+}
+
 /// Roda um script do projeto e devolve cada linha da saida para a tela.
 ///
 /// A ingestao leva ~25 min e a geracao ~15: sem acompanhar a saida, a janela
@@ -455,6 +461,7 @@ fn main() {
             buscar,
             municipios,
             segmentos,
+            facetas,
             malha,
             garantir_malha,
             atualizar,
