@@ -1,0 +1,70 @@
+{
+  "scene": "geral",
+  "variant": "claro",
+  "viewport": {
+    "width": 1440,
+    "height": 900
+  },
+  "markers": [
+    {
+      "t": 0.73,
+      "kind": "start",
+      "label": "garimpo"
+    },
+    {
+      "t": 0.73,
+      "kind": "note",
+      "label": "chapter: contatos"
+    },
+    {
+      "t": 1.51,
+      "kind": "action",
+      "label": "busca"
+    },
+    {
+      "t": 3.14,
+      "kind": "action",
+      "label": "digita busca"
+    },
+    {
+      "t": 3.87,
+      "kind": "action",
+      "label": "detalhe"
+    },
+    {
+      "t": 5.78,
+      "kind": "action",
+      "label": "ramos"
+    },
+    {
+      "t": 7.51,
+      "kind": "note",
+      "label": "chapter: segmentos"
+    },
+    {
+      "t": 7.59,
+      "kind": "action",
+      "label": "metalurgia"
+    },
+    {
+      "t": 9.23,
+      "kind": "action",
+      "label": "mapa"
+    },
+    {
+      "t": 11.67,
+      "kind": "note",
+      "label": "chapter: mapa"
+    },
+    {
+      "t": 12.03,
+      "kind": "action",
+      "label": "métrica"
+    },
+    {
+      "t": 14.65,
+      "kind": "end",
+      "label": "fim"
+    }
+  ]
+}

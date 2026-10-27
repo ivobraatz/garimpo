@@ -1,0 +1,66 @@
+{
+    "contatos.claro":  {
+                           "scene":  "contatos",
+                           "variant":  "claro",
+                           "width":  1440,
+                           "height":  900,
+                           "duration":  6.32,
+                           "bytes":  181391
+                       },
+    "contatos.escuro":  {
+                            "scene":  "contatos",
+                            "variant":  "escuro",
+                            "width":  1440,
+                            "height":  900,
+                            "duration":  6.39,
+                            "bytes":  177992
+                        },
+    "mapa.claro":  {
+                       "scene":  "mapa",
+                       "variant":  "claro",
+                       "width":  1440,
+                       "height":  900,
+                       "duration":  3.09,
+                       "bytes":  120595
+                   },
+    "mapa.escuro":  {
+                        "scene":  "mapa",
+                        "variant":  "escuro",
+                        "width":  1440,
+                        "height":  900,
+                        "duration":  3.05,
+                        "bytes":  40179
+                    },
+    "ramos.claro":  {
+                        "scene":  "ramos",
+                        "variant":  "claro",
+                        "width":  1440,
+                        "height":  900,
+                        "duration":  4.82,
+                        "bytes":  80526
+                    },
+    "ramos.escuro":  {
+                         "scene":  "ramos",
+                         "variant":  "escuro",
+                         "width":  1440,
+                         "height":  900,
+                         "duration":  4.84,
+                         "bytes":  113624
+                     },
+    "geral.claro":  {
+                        "scene":  "geral",
+                        "variant":  "claro",
+                        "width":  1440,
+                        "height":  900,
+                        "duration":  14.24,
+                        "bytes":  258619
+                    },
+    "geral.escuro":  {
+                         "scene":  "geral",
+                         "variant":  "escuro",
+                         "width":  1440,
+                         "height":  900,
+                         "duration":  13.84,
+                         "bytes":  300308
+                     }
+}

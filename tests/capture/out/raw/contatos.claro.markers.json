@@ -1,0 +1,40 @@
+{
+  "scene": "contatos",
+  "variant": "claro",
+  "viewport": {
+    "width": 1440,
+    "height": 900
+  },
+  "markers": [
+    {
+      "t": 0.64,
+      "kind": "start",
+      "label": "lista de contatos"
+    },
+    {
+      "t": 0.64,
+      "kind": "note",
+      "label": "chapter: contatos"
+    },
+    {
+      "t": 1.75,
+      "kind": "action",
+      "label": "busca"
+    },
+    {
+      "t": 3.32,
+      "kind": "action",
+      "label": "digita busca"
+    },
+    {
+      "t": 4.21,
+      "kind": "action",
+      "label": "abre o contato"
+    },
+    {
+      "t": 6.86,
+      "kind": "end",
+      "label": "fim"
+    }
+  ]
+}

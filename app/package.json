@@ -10,7 +10,10 @@
     "app": "tauri dev --no-watch",
     "tools:build": "node scripts/build-python-tools.mjs",
     "app:build": "tauri build",
-    "lint": "next lint"
+    "lint": "next lint",
+    "capture": "tsx tests/capture/record.ts && tsx ../tests/capture/encode.ts",
+    "capture:record": "tsx tests/capture/record.ts",
+    "capture:encode": "tsx ../tests/capture/encode.ts"
   },
   "dependencies": {
     "@tauri-apps/api": "^2",
@@ -25,11 +28,13 @@
     "react-dom": "^19.0.0"
   },
   "devDependencies": {
+    "@playwright/test": "^1.62.1",
     "@tauri-apps/cli": "^2.11.4",
     "@types/d3-geo": "^3.1.0",
     "@types/node": "^22",
     "@types/react": "^19",
     "@types/react-dom": "^19",
+    "tsx": "^4.19.2",
     "typescript": "^5.7"
   }
 }

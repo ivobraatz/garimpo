@@ -1,0 +1,40 @@
+{
+  "scene": "ramos",
+  "variant": "claro",
+  "viewport": {
+    "width": 1440,
+    "height": 900
+  },
+  "markers": [
+    {
+      "t": 1.04,
+      "kind": "action",
+      "label": "abre ramos"
+    },
+    {
+      "t": 2.93,
+      "kind": "start",
+      "label": "ramos"
+    },
+    {
+      "t": 2.93,
+      "kind": "note",
+      "label": "chapter: segmentos"
+    },
+    {
+      "t": 2.97,
+      "kind": "action",
+      "label": "metalurgia"
+    },
+    {
+      "t": 4.9,
+      "kind": "action",
+      "label": "filtra metalurgia"
+    },
+    {
+      "t": 7.38,
+      "kind": "end",
+      "label": "fim"
+    }
+  ]
+}
